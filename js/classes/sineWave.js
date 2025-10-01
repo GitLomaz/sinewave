@@ -2,12 +2,11 @@ class SineWave extends Phaser.GameObjects.Graphics {
   constructor(scene, x, y, config = {}) {
     super(scene, { x, y });
 
-    // Merge defaults with passed config
     this.config = Object.assign(
       {
         amplitude: 50,
         frequency: 0.02,
-        speed: .01,
+        speed: 0.01,
         color: 0x00ffcc,
         lineWidth: 2,
         width: scene.sys.game.config.width - 380,
@@ -17,18 +16,16 @@ class SineWave extends Phaser.GameObjects.Graphics {
     );
 
     this.offset = 0;
-
     this.startX = 900;
+    this.circleCount = 0;
 
-    // Create timer to move startX from 200 to 100
     scene.tweens.add({
       targets: this,
       startX: 100,
-      duration: 2000, // 2 seconds
-      ease: 'Linear'
+      duration: 2000,
+      ease: "Linear",
     });
 
-    this.circleCount = 0
     scene.add.existing(this);
   }
 
@@ -37,46 +34,43 @@ class SineWave extends Phaser.GameObjects.Graphics {
 
     this.clear();
 
-    // Draw the sine wave
+    // Draw sine wave
     this.lineStyle(this.config.lineWidth, this.config.color, 1);
     this.beginPath();
 
     const endX = 900;
     const startX = this.startX;
-    const circles = []; // store zero-crossing points this frame
-
-    let prevSineY = Math.sin(startX * this.config.frequency + this.offset); // first point
+    const peaks = []; // store peak points
 
     for (let x = startX + 1; x <= endX; x++) {
       const sineY = Math.sin(x * this.config.frequency + this.offset);
-      const y = this.config.height / 2 + this.config.amplitude * sineY;
+      const y = this.config.height / 2 - this.config.amplitude * sineY; // inverted
 
       if (x === startX + 1) this.moveTo(x, y);
       else this.lineTo(x, y);
 
-      // Detect zero-crossing (sign change)
-      if ((prevSineY > 0 && sineY <= 0) || (prevSineY < 0 && sineY >= 0)) {
-        circles.push(x);
+      // Detect peaks (max of sine)
+      // For max, check if sineY is greater than previous and next (simple discrete check)
+      if (x > startX + 1) {
+        const prevSineY = Math.sin((x - 1) * this.config.frequency + this.offset);
+        const nextSineY = Math.sin((x + 1) * this.config.frequency + this.offset);
+        if (sineY > prevSineY && sineY > nextSineY) {
+          peaks.push({ x, y });
+        }
       }
-
-      prevSineY = sineY;
     }
 
     this.strokePath();
 
-    // Draw circles exactly at zero crossings
-
-    if (this.circleCount > circles.length) {
-      stats.score++;
-      scene.score.setText(stats.score)
-    }
-
+    if (this.circleCount > circles.length) { 
+      stats.score++; scene.score.setText(stats.score) 
+    } 
     this.circleCount = circles.length
 
-
-    circles.forEach((x) => {
-      this.fillStyle(this.config.color, 1);
-      this.fillCircle(x, GAME_HEIGHT / 2, 5);
+    // Draw circles at peaks
+    this.fillStyle(this.config.color - 0x555555, 1);
+    peaks.forEach((p) => {
+      this.fillCircle(p.x, p.y, 7);
     });
   }
 }

@@ -22,7 +22,7 @@ class SineWave extends Phaser.GameObjects.Graphics {
     scene.tweens.add({
       targets: this,
       startX: 100,
-      duration: 2000,
+      duration: 20 / this.config.frequency,
       ease: "Linear",
     });
 

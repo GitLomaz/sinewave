@@ -12,6 +12,7 @@ let gameScene = new Phaser.Class({
   create: function () {
     scene = this
     const g = this.add.graphics();
+    scene.waves = [];
     g.lineStyle(4, 0x414141, 1);
 
     // draw a line from (100,100) to (700,500)
@@ -41,12 +42,18 @@ let gameScene = new Phaser.Class({
             g.strokeLineShape(line2);
           },
           onComplete: () => { 
-            scene.wave = new SineWave(this, 0, 0, {
+            scene.waves.push(new SineWave(this, 0, 0, {
               amplitude: 60,
               frequency: 0.025,
               speed: 0.002,
               color: 0xff66cc
-            });
+            }));
+            scene.waves.push(new SineWave(this, 0, 0, {
+              amplitude: 100,
+              frequency: 0.010,
+              speed: 0.0005,
+              color: 0x48b9fa
+            }));
           }
         });
       }
@@ -57,7 +64,8 @@ let gameScene = new Phaser.Class({
   },
 
   update(time, delta) {
-    if (this.wave)
-      this.wave.update(delta);
+    this.waves.forEach((wave) => {
+      wave.update(delta)
+    })
   }
 });

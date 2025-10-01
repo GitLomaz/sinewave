@@ -3,5 +3,7 @@ let config = {
   width: GAME_WIDTH,
   height: GAME_HEIGHT,
   parent: "wrapper",
-  scene: [titleScene, gameScene],
+  scene: [gameScene, titleScene],
 };
+
+const game = new Phaser.Game(config);

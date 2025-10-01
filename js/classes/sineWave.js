@@ -28,7 +28,7 @@ class SineWave extends Phaser.GameObjects.Graphics {
       ease: 'Linear'
     });
 
-
+    this.circleCount = 0
     scene.add.existing(this);
   }
 
@@ -65,6 +65,15 @@ class SineWave extends Phaser.GameObjects.Graphics {
     this.strokePath();
 
     // Draw circles exactly at zero crossings
+
+    if (this.circleCount > circles.length) {
+      stats.score++;
+      scene.score.setText(stats.score)
+    }
+
+    this.circleCount = circles.length
+
+
     circles.forEach((x) => {
       this.fillStyle(this.config.color, 1);
       this.fillCircle(x, GAME_HEIGHT / 2, 5);

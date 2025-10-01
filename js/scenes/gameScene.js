@@ -52,7 +52,7 @@ let gameScene = new Phaser.Class({
       }
     });
 
-
+    this.score = this.add.text(15, 15, "0")
 
   },
 

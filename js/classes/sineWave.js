@@ -62,10 +62,10 @@ class SineWave extends Phaser.GameObjects.Graphics {
 
     this.strokePath();
 
-    if (this.circleCount > circles.length) { 
+    if (this.circleCount > peaks.length) { 
       stats.score++; scene.score.setText(stats.score) 
     } 
-    this.circleCount = circles.length
+    this.circleCount = peaks.length
 
     // Draw circles at peaks
     this.fillStyle(this.config.color - 0x555555, 1);

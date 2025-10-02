@@ -18,15 +18,20 @@ class SineWave extends Phaser.GameObjects.Graphics {
     this.offset = 0;
     this.startX = 900;
     this.circleCount = 0;
+    this.wavelength = (2 * Math.PI) / this.config.frequency;
+    const pixelsToTravel = 900 - 100; // distance startX moves
+    const msPerWavelength = 1000;     // one full sine wave every 1s
+    const duration = (pixelsToTravel / this.wavelength) * msPerWavelength;
 
     scene.tweens.add({
       targets: this,
       startX: 100,
-      duration: 20 / this.config.frequency,
+      duration: duration,
       ease: "Linear",
     });
 
     scene.add.existing(this);
+
   }
 
   update(delta) {
@@ -63,12 +68,14 @@ class SineWave extends Phaser.GameObjects.Graphics {
     this.strokePath();
 
     if (this.circleCount > peaks.length) { 
-      stats.score++; scene.score.setText(stats.score) 
+      stats.score++; 
+      scene.score.setText(stats.score)
+      scene.emitDebris(100, GAME_HEIGHT / 2 - this.config.amplitude, {tint: [this.config.nodeColor, this.config.color]}) 
     } 
     this.circleCount = peaks.length
 
     // Draw circles at peaks
-    this.fillStyle(this.config.color - 0x555555, 1);
+    this.fillStyle(this.config.nodeColor, 1);
     peaks.forEach((p) => {
       this.fillCircle(p.x, p.y, 7);
     });

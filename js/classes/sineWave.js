@@ -1,16 +1,16 @@
 class SineWave extends Phaser.GameObjects.Graphics {
-  constructor(scene, x, y, config = {}) {
-    super(scene, { x, y });
-
+  constructor(config = {}) {
+    super(scene, { x: 0, y: 0 });
+    this.upgradeBox = false;
     this.config = Object.assign(
       {
         amplitude: 50,
-        frequency: 0.02,
-        speed: 0.01,
-        color: 0x00ffcc,
+        frequency: 0.02, // Adjust frequency to speed things up
+        speed: 0.01, // Leave speed alone per color for now
         lineWidth: 2,
-        width: scene.sys.game.config.width - 380,
-        height: scene.sys.game.config.height,
+        width: GAME_WIDTH - 380,
+        height: GAME_HEIGHT,
+        index: 0
       },
       config
     );
@@ -31,7 +31,6 @@ class SineWave extends Phaser.GameObjects.Graphics {
     });
 
     scene.add.existing(this);
-
   }
 
   update(delta) {
@@ -68,9 +67,7 @@ class SineWave extends Phaser.GameObjects.Graphics {
     this.strokePath();
 
     if (this.circleCount > peaks.length) { 
-      stats.score++; 
-      scene.score.setText(stats.score)
-      scene.emitDebris(100, GAME_HEIGHT / 2 - this.config.amplitude, {tint: [this.config.nodeColor, this.config.color]}) 
+      this.payout()
     } 
     this.circleCount = peaks.length
 
@@ -79,5 +76,23 @@ class SineWave extends Phaser.GameObjects.Graphics {
     peaks.forEach((p) => {
       this.fillCircle(p.x, p.y, 7);
     });
+  }
+
+  adjustConfigValue(key, value, transition = 1000) {
+    scene.tweens.add({
+      targets: this.config,
+      [key]: value,
+      duration: transition,
+      ease: "Quad.easeOut",
+    });
+  }
+
+  payout() {
+    stats.score++; 
+    scene.score.setText(stats.score)
+    scene.emitDebris(100, GAME_HEIGHT / 2 - this.config.amplitude, {tint: [this.config.nodeColor, this.config.color]}) 
+    if (!this.upgradeBox) {
+      this.upgradeBox = new UpgradeBox(1100, 100 + this.config.index * 100, this.config.index)
+    }
   }
 }

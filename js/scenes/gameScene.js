@@ -50,20 +50,8 @@ let gameScene = new Phaser.Class({
             g.strokeLineShape(line2);
           },
           onComplete: () => { 
-            scene.waves.push(new SineWave(this, 0, 0, {
-              amplitude: 60,
-              frequency: 0.025,
-              speed: 0.002,
-              color: 0xff66cc,
-              nodeColor: 0xe74db4
-            }));
-            scene.waves.push(new SineWave(this, 0, 0, {
-              amplitude: 100,
-              frequency: 0.010,
-              speed: 0.0005,
-              color:0x48b9fa,
-              nodeColor: 0x2e9ad8
-            }));
+            scene.waves.push(new SineWave(waves[0]));
+            scene.waves.push(new SineWave(waves[1]));
           }
         });
       }
@@ -93,12 +81,9 @@ let gameScene = new Phaser.Class({
     };
 
     options = { ...defaults, ...options };
-    
-    let speedBias;
-    let angleDeg;
   
-    angleDeg = 0;
-    speedBias = Phaser.Math.Between(5, 15);
+    let angleDeg = 0;
+    let speedBias = Phaser.Math.Between(5, 15);
 
     const emitter = this.debrisParticles.createEmitter({
       x, y,

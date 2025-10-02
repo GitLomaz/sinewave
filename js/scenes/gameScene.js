@@ -52,6 +52,7 @@ let gameScene = new Phaser.Class({
           onComplete: () => { 
             scene.waves.push(new SineWave(waves[0]));
             scene.waves.push(new SineWave(waves[1]));
+            scene.waves.push(new SineWave(waves[2]));
           }
         });
       }

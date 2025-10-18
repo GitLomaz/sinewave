@@ -1,4 +1,12 @@
 const waves = [
+  // {
+  //   amplitude: 50,
+  //   frequency: 0.3,
+  //   speed: 0.1,
+  //   color: 0xff66cc,
+  //   nodeColor: 0xe74db4,
+  //   index: 0
+  // },  
   {
     amplitude: 50,
     frequency: 0.025,

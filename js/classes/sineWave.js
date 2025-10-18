@@ -34,6 +34,9 @@ class SineWave extends Phaser.GameObjects.Graphics {
   }
 
   update(delta) {
+    const factor = this.config.speed * this.config.frequency;
+    // maybe .03 as a threshold
+    
     this.offset += this.config.speed * delta;
 
     this.clear();
@@ -46,23 +49,31 @@ class SineWave extends Phaser.GameObjects.Graphics {
     const startX = this.startX;
     const peaks = []; // store peak points
 
-    for (let x = startX + 1; x <= endX; x++) {
-      const sineY = Math.sin(x * this.config.frequency + this.offset);
-      const y = this.config.height / 2 - this.config.amplitude * sineY; // inverted
+for (let x = startX + 1; x <= endX; x++) {
+  // Modified sine: one tall, one smaller peak per wavelength
+  const sineY =
+    Math.sin(x * this.config.frequency + this.offset) * 0.8 +
+    Math.sin(2 * x * this.config.frequency + this.offset + Math.PI / 4) * 0.2;
 
-      if (x === startX + 1) this.moveTo(x, y);
-      else this.lineTo(x, y);
+  const y = this.config.height / 2 - this.config.amplitude * sineY;
 
-      // Detect peaks (max of sine)
-      // For max, check if sineY is greater than previous and next (simple discrete check)
-      if (x > startX + 1) {
-        const prevSineY = Math.sin((x - 1) * this.config.frequency + this.offset);
-        const nextSineY = Math.sin((x + 1) * this.config.frequency + this.offset);
-        if (sineY > prevSineY && sineY > nextSineY) {
-          peaks.push({ x, y });
-        }
-      }
+  if (x === startX + 1) this.moveTo(x, y);
+  else this.lineTo(x, y);
+
+  // Peak detection
+  if (x > startX + 1) {
+    const prevSineY =
+      Math.sin((x - 1) * this.config.frequency + this.offset) * 0.8 +
+      Math.sin(2 * (x - 1) * this.config.frequency + this.offset + Math.PI / 4) * 0.2;
+    const nextSineY =
+      Math.sin((x + 1) * this.config.frequency + this.offset) * 0.8 +
+      Math.sin(2 * (x + 1) * this.config.frequency + this.offset + Math.PI / 4) * 0.2;
+
+    if (sineY > prevSineY && sineY > nextSineY) {
+      peaks.push({ x, y });
     }
+  }
+}
 
     this.strokePath();
 

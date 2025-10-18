@@ -10,7 +10,8 @@ class SineWave extends Phaser.GameObjects.Graphics {
         lineWidth: 2,
         width: GAME_WIDTH - 380,
         height: GAME_HEIGHT,
-        index: 0
+        index: 0,
+        phaseShift: Math.PI / 4 // Default to 45 degrees shift
       },
       config
     );
@@ -49,24 +50,65 @@ class SineWave extends Phaser.GameObjects.Graphics {
     const startX = this.startX;
     const peaks = []; // store peak points
 
+    // Draw debug waves in different colors
+    
+    // Draw main wave in red
+    this.lineStyle(2, 0xff0000, 0.5);
+    this.beginPath();
     for (let x = startX + 1; x <= endX; x++) {
-      // Both waves move with the same offset, but second wave has a phase difference
-      const mainSineY = Math.sin(x * this.config.frequency + this.offset);
-      const secondarySineY = 0.3 * Math.sin(2.5 * x * this.config.frequency + this.offset + Math.PI/2); // Same speed, phase shifted by PI/2
-      const combinedSineY = mainSineY + secondarySineY;
+      const wave1 = Math.sin(x * this.config.frequency + this.offset);
+      const y = this.config.height / 2 - this.config.amplitude * wave1;
+      if (x === startX + 1) this.moveTo(x, y);
+      else this.lineTo(x, y);
+    }
+    this.strokePath();
+
+    // Draw double frequency wave in blue (with double speed offset)
+    this.lineStyle(2, 0x0000ff, 0.5);
+    this.beginPath();
+    for (let x = startX + 1; x <= endX; x++) {
+      const wave2 = 0.7 * Math.sin(2 * x * this.config.frequency + this.offset * 2);
+      const y = this.config.height / 2 - this.config.amplitude * wave2;
+      if (x === startX + 1) this.moveTo(x, y);
+      else this.lineTo(x, y);
+    }
+    this.strokePath();
+
+    // Draw third wave in green (triple frequency)
+    this.lineStyle(2, 0x00ff00, 0.5);
+    this.beginPath();
+    for (let x = startX + 1; x <= endX; x++) {
+      const wave3 = 0.3 * Math.sin(3 * x * this.config.frequency + this.offset * 3);
+      const y = this.config.height / 2 - this.config.amplitude * wave3;
+      if (x === startX + 1) this.moveTo(x, y);
+      else this.lineTo(x, y);
+    }
+    this.strokePath();
+
+    // Draw combined wave in original color
+    this.lineStyle(this.config.lineWidth, this.config.color, 1);
+    this.beginPath();
+
+    for (let x = startX + 1; x <= endX; x++) {
+      // Combine all three waves
+      const wave1 = Math.sin(x * this.config.frequency + this.offset);
+      const wave2 = 0.7 * Math.sin(2 * x * this.config.frequency + this.offset * 2);
+      const wave3 = 0.3 * Math.sin(3 * x * this.config.frequency + this.offset * 3);
+      const combinedSineY = wave1 + wave2 + wave3;
       
-      const y = this.config.height / 2 - this.config.amplitude * combinedSineY; // inverted
+      const y = this.config.height / 2 - this.config.amplitude * combinedSineY;
 
       if (x === startX + 1) this.moveTo(x, y);
       else this.lineTo(x, y);
 
       // Detect peaks (max of sine)
-      // For max, check if combinedSineY is greater than previous and next
       if (x > startX + 1) {
         const prevSineY = Math.sin((x - 1) * this.config.frequency + this.offset) + 
-                         0.3 * Math.sin(2.5 * (x - 1) * this.config.frequency + this.offset + Math.PI/2);
+                         0.7 * Math.sin(2 * (x - 1) * this.config.frequency + this.offset * 2) +
+                         0.3 * Math.sin(3 * (x - 1) * this.config.frequency + this.offset * 3);
         const nextSineY = Math.sin((x + 1) * this.config.frequency + this.offset) + 
-                         0.3 * Math.sin(2.5 * (x + 1) * this.config.frequency + this.offset + Math.PI/2);
+                         0.7 * Math.sin(2 * (x + 1) * this.config.frequency + this.offset * 2) +
+                         0.3 * Math.sin(3 * (x + 1) * this.config.frequency + this.offset * 3);
         if (combinedSineY > prevSineY && combinedSineY > nextSineY) {
           peaks.push({ x, y });
         }

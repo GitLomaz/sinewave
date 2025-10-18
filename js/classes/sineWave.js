@@ -11,7 +11,8 @@ class SineWave extends Phaser.GameObjects.Graphics {
         width: GAME_WIDTH - 380,
         height: GAME_HEIGHT,
         index: 0,
-        phaseShift: Math.PI / 4 // Default to 45 degrees shift
+        phaseShift: Math.PI / 4, // Default to 45 degrees shift
+        peakCount: 3 // Number of waves to generate (1-4)
       },
       config
     );
@@ -90,11 +91,19 @@ class SineWave extends Phaser.GameObjects.Graphics {
     this.beginPath();
 
     for (let x = startX + 1; x <= endX; x++) {
-      // Combine all three waves with stronger secondary waves and phase shifts
-      const wave1 = Math.sin(x * this.config.frequency + this.offset);
-      const wave2 = 0.8 * Math.sin(2 * x * this.config.frequency + this.offset * 2 + Math.PI/3);
-      const wave3 = 0.6 * Math.sin(3 * x * this.config.frequency + this.offset * 3 + Math.PI/2);
-      const combinedSineY = wave1 + wave2 + wave3;
+      // Initialize with the main wave
+      let combinedSineY = Math.sin(x * this.config.frequency + this.offset);
+      
+      // Add additional waves based on peakCount
+      if (this.config.peakCount >= 2) {
+        combinedSineY += 0.8 * Math.sin(2 * x * this.config.frequency + this.offset * 2 + Math.PI/3);
+      }
+      if (this.config.peakCount >= 3) {
+        combinedSineY += 0.6 * Math.sin(3 * x * this.config.frequency + this.offset * 3 + Math.PI/2);
+      }
+      if (this.config.peakCount >= 4) {
+        combinedSineY += 0.4 * Math.sin(4 * x * this.config.frequency + this.offset * 4 + Math.PI/4);
+      }
       
       const y = this.config.height / 2 - this.config.amplitude * combinedSineY;
 
@@ -103,12 +112,26 @@ class SineWave extends Phaser.GameObjects.Graphics {
 
       // Detect peaks (max of sine)
       if (x > startX + 1) {
-        const prevSineY = Math.sin((x - 1) * this.config.frequency + this.offset) + 
-                         0.8 * Math.sin(2 * (x - 1) * this.config.frequency + this.offset * 2 + Math.PI/3) +
-                         0.6 * Math.sin(3 * (x - 1) * this.config.frequency + this.offset * 3 + Math.PI/2);
-        const nextSineY = Math.sin((x + 1) * this.config.frequency + this.offset) + 
-                         0.8 * Math.sin(2 * (x + 1) * this.config.frequency + this.offset * 2 + Math.PI/3) +
-                         0.6 * Math.sin(3 * (x + 1) * this.config.frequency + this.offset * 3 + Math.PI/2);
+        let prevSineY = Math.sin((x - 1) * this.config.frequency + this.offset);
+        if (this.config.peakCount >= 2) {
+          prevSineY += 0.8 * Math.sin(2 * (x - 1) * this.config.frequency + this.offset * 2 + Math.PI/3);
+        }
+        if (this.config.peakCount >= 3) {
+          prevSineY += 0.6 * Math.sin(3 * (x - 1) * this.config.frequency + this.offset * 3 + Math.PI/2);
+        }
+        if (this.config.peakCount >= 4) {
+          prevSineY += 0.4 * Math.sin(4 * (x - 1) * this.config.frequency + this.offset * 4 + Math.PI/4);
+        }
+        let nextSineY = Math.sin((x + 1) * this.config.frequency + this.offset);
+        if (this.config.peakCount >= 2) {
+          nextSineY += 0.8 * Math.sin(2 * (x + 1) * this.config.frequency + this.offset * 2 + Math.PI/3);
+        }
+        if (this.config.peakCount >= 3) {
+          nextSineY += 0.6 * Math.sin(3 * (x + 1) * this.config.frequency + this.offset * 3 + Math.PI/2);
+        }
+        if (this.config.peakCount >= 4) {
+          nextSineY += 0.4 * Math.sin(4 * (x + 1) * this.config.frequency + this.offset * 4 + Math.PI/4);
+        }
         if (combinedSineY > prevSineY && combinedSineY > nextSineY) {
           peaks.push({ x, y });
         }
@@ -141,7 +164,22 @@ class SineWave extends Phaser.GameObjects.Graphics {
   payout() {
     stats.score++; 
     scene.score.setText(stats.score)
-    scene.emitDebris(100, GAME_HEIGHT / 2 - this.config.amplitude, {tint: [this.config.nodeColor, this.config.color]}) 
+    
+    // Calculate the Y position of the last peak for the debris
+    const lastX = 100; // Where the wave hits the wall
+    let lastY = Math.sin(lastX * this.config.frequency + this.offset);
+    if (this.config.peakCount >= 2) {
+      lastY += 0.8 * Math.sin(2 * lastX * this.config.frequency + this.offset * 2 + Math.PI/3);
+    }
+    if (this.config.peakCount >= 3) {
+      lastY += 0.6 * Math.sin(3 * lastX * this.config.frequency + this.offset * 3 + Math.PI/2);
+    }
+    if (this.config.peakCount >= 4) {
+      lastY += 0.4 * Math.sin(4 * lastX * this.config.frequency + this.offset * 4 + Math.PI/4);
+    }
+    const emitY = this.config.height / 2 - this.config.amplitude * lastY;
+    
+    scene.emitDebris(100, emitY, {tint: [this.config.nodeColor, this.config.color]}) 
     if (!this.upgradeBox) {
       this.upgradeBox = new UpgradeBox(1100, 100 + this.config.index * 100, this.config.index)
     }

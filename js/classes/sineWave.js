@@ -49,31 +49,29 @@ class SineWave extends Phaser.GameObjects.Graphics {
     const startX = this.startX;
     const peaks = []; // store peak points
 
-for (let x = startX + 1; x <= endX; x++) {
-  // Modified sine: one tall, one smaller peak per wavelength
-  const sineY =
-    Math.sin(x * this.config.frequency + this.offset) * 0.8 +
-    Math.sin(2 * x * this.config.frequency + this.offset + Math.PI / 4) * 0.2;
+    for (let x = startX + 1; x <= endX; x++) {
+      // Both waves move with the same offset, but second wave has a phase difference
+      const mainSineY = Math.sin(x * this.config.frequency + this.offset);
+      const secondarySineY = 0.3 * Math.sin(2.5 * x * this.config.frequency + this.offset + Math.PI/2); // Same speed, phase shifted by PI/2
+      const combinedSineY = mainSineY + secondarySineY;
+      
+      const y = this.config.height / 2 - this.config.amplitude * combinedSineY; // inverted
 
-  const y = this.config.height / 2 - this.config.amplitude * sineY;
+      if (x === startX + 1) this.moveTo(x, y);
+      else this.lineTo(x, y);
 
-  if (x === startX + 1) this.moveTo(x, y);
-  else this.lineTo(x, y);
-
-  // Peak detection
-  if (x > startX + 1) {
-    const prevSineY =
-      Math.sin((x - 1) * this.config.frequency + this.offset) * 0.8 +
-      Math.sin(2 * (x - 1) * this.config.frequency + this.offset + Math.PI / 4) * 0.2;
-    const nextSineY =
-      Math.sin((x + 1) * this.config.frequency + this.offset) * 0.8 +
-      Math.sin(2 * (x + 1) * this.config.frequency + this.offset + Math.PI / 4) * 0.2;
-
-    if (sineY > prevSineY && sineY > nextSineY) {
-      peaks.push({ x, y });
+      // Detect peaks (max of sine)
+      // For max, check if combinedSineY is greater than previous and next
+      if (x > startX + 1) {
+        const prevSineY = Math.sin((x - 1) * this.config.frequency + this.offset) + 
+                         0.3 * Math.sin(2.5 * (x - 1) * this.config.frequency + this.offset + Math.PI/2);
+        const nextSineY = Math.sin((x + 1) * this.config.frequency + this.offset) + 
+                         0.3 * Math.sin(2.5 * (x + 1) * this.config.frequency + this.offset + Math.PI/2);
+        if (combinedSineY > prevSineY && combinedSineY > nextSineY) {
+          peaks.push({ x, y });
+        }
+      }
     }
-  }
-}
 
     this.strokePath();
 

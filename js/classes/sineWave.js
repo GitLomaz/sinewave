@@ -78,7 +78,7 @@ class SineWave extends Phaser.GameObjects.Graphics {
     this.lineStyle(2, 0x00ff00, 0.5);
     this.beginPath();
     for (let x = startX + 1; x <= endX; x++) {
-      const wave3 = 0.3 * Math.sin(3 * x * this.config.frequency + this.offset * 3);
+      const wave3 = 0.6 * Math.sin(3 * x * this.config.frequency + this.offset * 3 + Math.PI/2);
       const y = this.config.height / 2 - this.config.amplitude * wave3;
       if (x === startX + 1) this.moveTo(x, y);
       else this.lineTo(x, y);
@@ -90,10 +90,10 @@ class SineWave extends Phaser.GameObjects.Graphics {
     this.beginPath();
 
     for (let x = startX + 1; x <= endX; x++) {
-      // Combine all three waves
+      // Combine all three waves with stronger secondary waves and phase shifts
       const wave1 = Math.sin(x * this.config.frequency + this.offset);
-      const wave2 = 0.7 * Math.sin(2 * x * this.config.frequency + this.offset * 2);
-      const wave3 = 0.3 * Math.sin(3 * x * this.config.frequency + this.offset * 3);
+      const wave2 = 0.8 * Math.sin(2 * x * this.config.frequency + this.offset * 2 + Math.PI/3);
+      const wave3 = 0.6 * Math.sin(3 * x * this.config.frequency + this.offset * 3 + Math.PI/2);
       const combinedSineY = wave1 + wave2 + wave3;
       
       const y = this.config.height / 2 - this.config.amplitude * combinedSineY;
@@ -104,11 +104,11 @@ class SineWave extends Phaser.GameObjects.Graphics {
       // Detect peaks (max of sine)
       if (x > startX + 1) {
         const prevSineY = Math.sin((x - 1) * this.config.frequency + this.offset) + 
-                         0.7 * Math.sin(2 * (x - 1) * this.config.frequency + this.offset * 2) +
-                         0.3 * Math.sin(3 * (x - 1) * this.config.frequency + this.offset * 3);
+                         0.8 * Math.sin(2 * (x - 1) * this.config.frequency + this.offset * 2 + Math.PI/3) +
+                         0.6 * Math.sin(3 * (x - 1) * this.config.frequency + this.offset * 3 + Math.PI/2);
         const nextSineY = Math.sin((x + 1) * this.config.frequency + this.offset) + 
-                         0.7 * Math.sin(2 * (x + 1) * this.config.frequency + this.offset * 2) +
-                         0.3 * Math.sin(3 * (x + 1) * this.config.frequency + this.offset * 3);
+                         0.8 * Math.sin(2 * (x + 1) * this.config.frequency + this.offset * 2 + Math.PI/3) +
+                         0.6 * Math.sin(3 * (x + 1) * this.config.frequency + this.offset * 3 + Math.PI/2);
         if (combinedSineY > prevSineY && combinedSineY > nextSineY) {
           peaks.push({ x, y });
         }

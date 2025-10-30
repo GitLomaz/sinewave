@@ -13,7 +13,8 @@ const waves = [
     speed: 0.002,
     color: 0xff66cc,
     nodeColor: 0xe74db4,
-    index: 0
+    index: 0,
+    unlock: 0
   },
   {
     amplitude: 100,
@@ -21,7 +22,8 @@ const waves = [
     speed: 0.001,
     color:0x48b9fa,
     nodeColor: 0x2e9ad8,
-    index: 1
+    index: 1,
+    unlock: 100
   },
   {
     amplitude: 150,
@@ -29,6 +31,7 @@ const waves = [
     speed: 0.0005,
     color:0xfffb26,
     nodeColor: 0xe8e427,
-    index: 2
+    index: 2,
+    unlock: 10000
   }
 ]

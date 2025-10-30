@@ -7,11 +7,13 @@ let gameScene = new Phaser.Class({
   },
 
   preload: function () {
+    this.load.image("lock", "images/lock.png");
   },
 
   create: function () {
     scene = this
-
+    scene.saveInterval = 60 * 1000
+    scene.saveTimer = 0;
     const debrisGraphics = this.make.graphics({ x: 0, y: 0, add: false });
     debrisGraphics.fillStyle(0xffffff, 1);
     debrisGraphics.fillRect(0, 0, 4, 4);
@@ -50,19 +52,26 @@ let gameScene = new Phaser.Class({
             g.strokeLineShape(line2);
           },
           onComplete: () => { 
-            scene.waves.push(new SineWave(waves[0]));
-            // scene.waves.push(new SineWave(waves[1]));
-            // scene.waves.push(new SineWave(waves[2]));
+            generateButton(0);
           }
         });
       }
     });
 
-    this.score = this.add.text(15, 15, "0")
-
+    this.score = this.add.text(15, 15, "0", {
+      fontFamily: "font1",
+      fontSize: "24px",
+      color: "#ffffff"
+    })
+    loadStats();  
   },
 
   update(time, delta) {
+    scene.saveTimer += delta;
+    if (scene.saveTimer >= scene.saveInterval) {
+      saveGame();   
+      scene.saveTimer = 0; 
+    }
     this.waves.forEach((wave) => {
       wave.update(delta)
     })

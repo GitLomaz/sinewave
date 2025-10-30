@@ -1,7 +1,7 @@
 class SineWave extends Phaser.GameObjects.Graphics {
-  constructor(config = {}) {
+  constructor(config = {}, peaks = 1, level = 1) {
     super(scene, { x: 0, y: 0 });
-    this.upgradeBox = false;
+    this.upgradeButton = false;
     this.config = Object.assign(
       {
         amplitude: 50,
@@ -12,7 +12,8 @@ class SineWave extends Phaser.GameObjects.Graphics {
         height: GAME_HEIGHT,
         index: 0,
         phaseShift: Math.PI / 4, // Default to 45 degrees shift
-        peakCount: 3 // Number of waves to generate (1-4)
+        peakCount: 1,
+        debug: false,
       },
       config
     );
@@ -31,7 +32,7 @@ class SineWave extends Phaser.GameObjects.Graphics {
       duration: duration,
       ease: "Linear",
     });
-
+    scene.waves.push(this);
     scene.add.existing(this);
   }
 
@@ -51,40 +52,39 @@ class SineWave extends Phaser.GameObjects.Graphics {
     const startX = this.startX;
     const peaks = []; // store peak points
 
-    // Draw debug waves in different colors
-    
-    // Draw main wave in red
-    this.lineStyle(2, 0xff0000, 0.5);
-    this.beginPath();
-    for (let x = startX + 1; x <= endX; x++) {
-      const wave1 = Math.sin(x * this.config.frequency + this.offset);
-      const y = this.config.height / 2 - this.config.amplitude * wave1;
-      if (x === startX + 1) this.moveTo(x, y);
-      else this.lineTo(x, y);
-    }
-    this.strokePath();
+    if (this.config.debug) {
+      this.lineStyle(2, 0xff0000, 0.5);
+      this.beginPath();
+      for (let x = startX + 1; x <= endX; x++) {
+        const wave1 = Math.sin(x * this.config.frequency + this.offset);
+        const y = this.config.height / 2 - this.config.amplitude * wave1;
+        if (x === startX + 1) this.moveTo(x, y);
+        else this.lineTo(x, y);
+      }
+      this.strokePath();
 
-    // Draw double frequency wave in blue (with double speed offset)
-    this.lineStyle(2, 0x0000ff, 0.5);
-    this.beginPath();
-    for (let x = startX + 1; x <= endX; x++) {
-      const wave2 = 0.7 * Math.sin(2 * x * this.config.frequency + this.offset * 2);
-      const y = this.config.height / 2 - this.config.amplitude * wave2;
-      if (x === startX + 1) this.moveTo(x, y);
-      else this.lineTo(x, y);
-    }
-    this.strokePath();
+      // Draw double frequency wave in blue (with double speed offset)
+      this.lineStyle(2, 0x0000ff, 0.5);
+      this.beginPath();
+      for (let x = startX + 1; x <= endX; x++) {
+        const wave2 = 0.7 * Math.sin(2 * x * this.config.frequency + this.offset * 2);
+        const y = this.config.height / 2 - this.config.amplitude * wave2;
+        if (x === startX + 1) this.moveTo(x, y);
+        else this.lineTo(x, y);
+      }
+      this.strokePath();
 
-    // Draw third wave in green (triple frequency)
-    this.lineStyle(2, 0x00ff00, 0.5);
-    this.beginPath();
-    for (let x = startX + 1; x <= endX; x++) {
-      const wave3 = 0.6 * Math.sin(3 * x * this.config.frequency + this.offset * 3 + Math.PI/2);
-      const y = this.config.height / 2 - this.config.amplitude * wave3;
-      if (x === startX + 1) this.moveTo(x, y);
-      else this.lineTo(x, y);
+      // Draw third wave in green (triple frequency)
+      this.lineStyle(2, 0x00ff00, 0.5);
+      this.beginPath();
+      for (let x = startX + 1; x <= endX; x++) {
+        const wave3 = 0.6 * Math.sin(3 * x * this.config.frequency + this.offset * 3 + Math.PI/2);
+        const y = this.config.height / 2 - this.config.amplitude * wave3;
+        if (x === startX + 1) this.moveTo(x, y);
+        else this.lineTo(x, y);
+      }
+      this.strokePath();
     }
-    this.strokePath();
 
     // Draw combined wave in original color
     this.lineStyle(this.config.lineWidth, this.config.color, 1);
@@ -162,11 +162,10 @@ class SineWave extends Phaser.GameObjects.Graphics {
   }
 
   payout() {
-    stats.score++; 
-    scene.score.setText(stats.score)
-    
-    // Calculate the Y position of the last peak for the debris
-    const lastX = 100; // Where the wave hits the wall
+    stats.score = stats.score.plus(1);
+    scene.score.setText(stats.score.toString())
+
+    const lastX = 100;
     let lastY = Math.sin(lastX * this.config.frequency + this.offset);
     if (this.config.peakCount >= 2) {
       lastY += 0.8 * Math.sin(2 * lastX * this.config.frequency + this.offset * 2 + Math.PI/3);
@@ -180,8 +179,8 @@ class SineWave extends Phaser.GameObjects.Graphics {
     const emitY = this.config.height / 2 - this.config.amplitude * lastY;
     
     scene.emitDebris(100, emitY, {tint: [this.config.nodeColor, this.config.color]}) 
-    if (!this.upgradeBox) {
-      this.upgradeBox = new UpgradeBox(1100, 100 + this.config.index * 100, this.config.index)
+    if (!this.upgradeButton) {
+      this.upgradeButton = new UpgradeButton(1100, 100 + this.config.index * 100, this.config.index)
     }
   }
 }

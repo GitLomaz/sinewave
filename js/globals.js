@@ -4,5 +4,5 @@ const DEBUG = false;
 let scene;
 
 let stats = {
-  score: 0
+  score: new Decimal(0)
 }

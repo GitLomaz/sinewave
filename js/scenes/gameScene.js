@@ -23,6 +23,7 @@ let gameScene = new Phaser.Class({
 
     const g = this.add.graphics();
     scene.waves = [];
+    scene.upgradeButtons = [];
     g.lineStyle(4, 0x414141, 1);
 
     // draw a line from (100,100) to (700,500)

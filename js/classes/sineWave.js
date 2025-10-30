@@ -179,8 +179,10 @@ class SineWave extends Phaser.GameObjects.Graphics {
     const emitY = this.config.height / 2 - this.config.amplitude * lastY;
     
     scene.emitDebris(100, emitY, {tint: [this.config.nodeColor, this.config.color]}) 
-    // if (!this.upgradeButton) {
-    //   this.upgradeButton = new UpgradeButton(1100, 100 + this.config.index * 100, this.config.index)
-    // }
+    if (scene.upgradeButtons.length < this.config.index + 2) {
+      console.log('Generating button for wave index', this.config.index + 1);
+      generateButton(this.config.index + 1);
+    }
+
   }
 }

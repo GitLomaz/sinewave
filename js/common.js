@@ -21,7 +21,7 @@ function saveGame() {
 }
 
 function generateButton(index) {
-  new UpgradeButton(1100, 100 + index * 100, index)
+  new UpgradeButton(1100, 100 + index * 60, index)
 }
 
 function adjustValue(key, value) {

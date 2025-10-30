@@ -1,12 +1,4 @@
-const waves = [
-  // {
-  //   amplitude: 50,
-  //   frequency: 0.3,
-  //   speed: 0.1,
-  //   color: 0xff66cc,
-  //   nodeColor: 0xe74db4,
-  //   index: 0
-  // },  
+const waves = [ 
   {
     amplitude: 50,
     frequency: 0.025,
@@ -16,7 +8,7 @@ const waves = [
     index: 0,
     unlock: 0,
     upgrades: {
-      cost: 10,
+      cost: 100,
       modifier: 1.3,
       amplitideModifier: 1.1
     }
@@ -28,7 +20,12 @@ const waves = [
     color:0x48b9fa,
     nodeColor: 0x2e9ad8,
     index: 1,
-    unlock: 100
+    unlock: 1000,
+    upgrades: {
+      cost: 1300,
+      modifier: 1.3,
+      amplitideModifier: 1.1
+    }
   },
   {
     amplitude: 150,
@@ -37,6 +34,11 @@ const waves = [
     color:0xfffb26,
     nodeColor: 0xe8e427,
     index: 2,
-    unlock: 10000
+    unlock: 100000,
+    upgrades: {
+      cost: 130000,
+      modifier: 1.3,
+      amplitideModifier: 1.1
+    }
   }
 ]

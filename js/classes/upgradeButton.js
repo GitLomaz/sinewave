@@ -42,6 +42,7 @@ class UpgradeButton extends Phaser.GameObjects.Container {
 
     this.setAlpha(0)
     scene.add.existing(this);
+    scene.upgradeButtons.push(this);
     this.canAfford();
   }
 

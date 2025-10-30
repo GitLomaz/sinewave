@@ -17,7 +17,7 @@ const waves = [
     unlock: 0,
     upgrades: {
       cost: 10,
-      modifier: 1.2,
+      modifier: 1.3,
       amplitideModifier: 1.1
     }
   },

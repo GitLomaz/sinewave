@@ -31,22 +31,29 @@ class UpgradeButton extends Phaser.GameObjects.Container {
       fontFamily: "font1",
       fontSize: "20px",
     }).setOrigin(0.5);
+    this.levelText = scene.add.text(-110, 3, ``, {
+      fontFamily: "font1",
+      fontSize: "16px",
+    }).setOrigin(0)
     this.add(this.btn);
     this.add(this.lock);
     this.add(this.text);
+    this.add(this.levelText);
 
     this.setAlpha(0)
     scene.add.existing(this);
-    this.canAfford(stats.score.gte(this.getCost()));
+    this.canAfford();
   }
 
-  canAfford(afford) {
+  canAfford() {
+    const afford = stats.score.gte(this.getCost());
     scene.tweens.add({
       targets: this,
       alpha: afford ? 1 : 0.6,
       duration: 400
     });
     if (afford) {
+      this.btn.removeAllListeners('pointerdown');
       this.btn.setInteractive({ useHandCursor: true })
         .on('pointerdown', () => this.click());
     } else {
@@ -66,12 +73,20 @@ class UpgradeButton extends Phaser.GameObjects.Container {
   }
 
   click() {
-    if (this.level === 0 && stats.score.gte(this.getCost())) {
+    const afford = stats.score.gte(this.getCost());
+    if (!afford) return;
+    if (this.level === 0) {
       adjustValue('score', stats.score.minus(this.getCost()));
       this.lock.destroy();
       this.level = 1
       this.wave = new SineWave(this.waveTemplate);
+    } else if (this.level > 0) {
+      adjustValue('score', stats.score.minus(this.getCost()));
+      this.wave.adjustConfigValue('amplitude', this.wave.config.amplitude * this.waveTemplate.upgrades.amplitideModifier);
+      this.level += 1;
     }
+    this.levelText.setText(this.level);
+    this.canAfford();
     this.text.setText(`Cost: ${this.getCost()}`);
   }
 }

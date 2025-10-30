@@ -162,9 +162,8 @@ class SineWave extends Phaser.GameObjects.Graphics {
   }
 
   payout() {
-    const payout = new Decimal(this.config.amplitude / 50);
-    stats.score = stats.score.plus(1);
-    scene.score.setText(stats.score.toString())
+    const payout = new Decimal(this.config.amplitude / 5).ceil();
+    adjustValue('score', stats.score.plus(payout));
 
     const lastX = 100;
     let lastY = Math.sin(lastX * this.config.frequency + this.offset);

@@ -23,3 +23,10 @@ function saveGame() {
 function generateButton(index) {
   new UpgradeButton(1100, 100 + index * 100, index)
 }
+
+function adjustValue(key, value) {
+  stats[key] = value;
+  if (key === 'score') {
+    scene.score.setText(stats.score.toString())
+  }
+}

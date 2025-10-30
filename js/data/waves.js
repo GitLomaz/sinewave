@@ -14,7 +14,12 @@ const waves = [
     color: 0xff66cc,
     nodeColor: 0xe74db4,
     index: 0,
-    unlock: 0
+    unlock: 0,
+    upgrades: {
+      cost: 10,
+      modifier: 1.2,
+      amplitideModifier: 1.1
+    }
   },
   {
     amplitude: 100,

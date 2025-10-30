@@ -162,6 +162,7 @@ class SineWave extends Phaser.GameObjects.Graphics {
   }
 
   payout() {
+    const payout = new Decimal(this.config.amplitude / 50);
     stats.score = stats.score.plus(1);
     scene.score.setText(stats.score.toString())
 
@@ -179,8 +180,8 @@ class SineWave extends Phaser.GameObjects.Graphics {
     const emitY = this.config.height / 2 - this.config.amplitude * lastY;
     
     scene.emitDebris(100, emitY, {tint: [this.config.nodeColor, this.config.color]}) 
-    if (!this.upgradeButton) {
-      this.upgradeButton = new UpgradeButton(1100, 100 + this.config.index * 100, this.config.index)
-    }
+    // if (!this.upgradeButton) {
+    //   this.upgradeButton = new UpgradeButton(1100, 100 + this.config.index * 100, this.config.index)
+    // }
   }
 }

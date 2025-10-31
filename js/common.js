@@ -28,5 +28,6 @@ function adjustValue(key, value) {
   stats[key] = value;
   if (key === 'score') {
     scene.score.setText(stats.score.toString())
+    scene.upgradeButtons.forEach(button => button.canAfford());
   }
 }
